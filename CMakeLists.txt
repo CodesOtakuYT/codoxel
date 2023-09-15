@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.27.4)
-project(codoxel VERSION 0.1.0 LANGUAGES C)
+project(codoxel VERSION 0.1.0 LANGUAGES C CXX)
 
 include(cmake/CPM.cmake)
 
@@ -32,7 +32,7 @@ endif()
 
 # Engine
 add_library(${PROJECT_NAME} SHARED)
-target_sources(${PROJECT_NAME} PRIVATE engine/src/engine.c)
+target_sources(${PROJECT_NAME} PRIVATE engine/src/engine.c engine/src/renderer.c engine/src/impl.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE engine/include)
 target_compile_features(${PROJECT_NAME} PRIVATE c_std_23)
 target_compile_options(${PROJECT_NAME} PRIVATE
@@ -42,6 +42,8 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   -Wno-c++98-compat
   -Wno-declaration-after-statement
   -Wno-cast-function-type-strict
+  -Wno-c++-compat
+  -Wno-unsafe-buffer-usage
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_link_libraries(${PROJECT_NAME} PRIVATE cglm volk GPUOpen::VulkanMemoryAllocator SDL3::SDL3)
@@ -71,7 +73,10 @@ target_compile_options(${PROJECT_NAME}_launcher PRIVATE
   -Wno-c++98-compat
   -Wno-declaration-after-statement
   -Wno-cast-function-type-strict
+  -Wno-cast-function-type
+  -Wno-unused
 )
 target_include_directories(${PROJECT_NAME}_launcher PRIVATE engine/include)
+target_link_libraries(${PROJECT_NAME}_launcher PRIVATE cglm volk GPUOpen::VulkanMemoryAllocator SDL3::SDL3)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin)
